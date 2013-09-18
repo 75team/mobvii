@@ -14,6 +14,36 @@ PC网页访问 http://localhost:8080
 
 先进行手势训练，之后即可以玩啦~
 
+## 高级功能 —— 自己搭建服务器
+
+需要 node.js
+
+```bash
+npm install ws
+cd server
+node index.js
+```
+
+修改 www/js/config.js
+
+```javascript
+//改为你自己的服务器的地址
+var SEND_WS_URL = 'ws://ws1.androidzh.com:9090'; 
+var REC_WS_URL = 'ws://ws2.androidzh.com:9091';
+```
+
+修改 app 下的 conf.js
+
+```javascript
+var CONF = {
+	//socket接口地址 - 改为自己的服务器地址
+	ws : 'ws://ws1.androidzh.com:9090',
+	...
+}
+```
+
+重新编译 app，安装到手机上
+
 ## 手势映射表 
 ```json
 {
