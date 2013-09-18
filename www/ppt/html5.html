@@ -1,0 +1,258 @@
+<!doctype html>
+<html>
+	<head>
+  		<title>PPT | undefined队</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">	
+		<link href="styles.css" rel="stylesheet" />
+	</head>
+	<body>
+		<div id="impress">
+			<div class="no-support-message">
+				Your browser doesn't support impress.js.  Try Chrome or Safari.
+			</div>
+			
+			<div class="step" data-x="0" data-y="0">
+				<h1>HTML5 技术大赛 <em>(Undefined 队)</em></h1>
+				<em class="info" style="text-align:center;font-size:32px;">原理揭秘</em>
+			</div>
+			
+			<div class="step" data-x="1280" data-y="0">
+				<h1>产品概述</h1>
+				<h2>将智能手机、touch等作为游戏手柄，支持体感交互控制PC端的Web应用</h2>
+				<h3 style="text-align:left;font-size:24px;">技术涵盖的领域:</h3>
+				<ul>
+					<li>设备获得体感数据：传感器API</li>
+					<li>识别用户动作：肢体运动的智能识别</li>
+					<li>控制PC端：websocket</li>
+					<li>PC端的几个Demo应用</li>
+				</ul>
+			</div>
+			
+			<div class="step" data-x="1280" data-y="-1200">
+				<h1>传感器API</h1>
+				<ul>
+					<li>accelerometer.watchAcceleration</li>
+					<li>accelerometer.clearWatch</li>
+					<li>数据：{x:x轴加速度, y:y轴加速度, z:z轴加速度}</li>
+				</ul>
+			</div>
+			
+			<!--
+			<div class="step" data-x="1280" data-y="-2400" data-rotate-x="30" data-rotate-y="-60" data-scale="0.5">
+				<h1>那就简直<strong class="rbl">弱爆了</strong></h1>
+			</div>
+			-->
+			
+			<div class="step" data-x="0" data-y="-1600" data-rotate="90">
+				<h1>手势姿势：运动姿势与状态姿势</h1>
+				<ul>
+					<li>状态姿势：水平、翻转、左偏、右偏、竖立、倒立</li>
+					<li>运动姿势：左切、右切、摇晃、圆周运动</li>
+				</ul>
+			</div>
+			
+			<div class="step" data-x="-800" data-y="-2600" data-rotate-x="60" data-rotate-y="60" data-rotate-z="30" data-scale="5">
+				<h1>状态姿势的简单检测——加速度变化</h1>
+			</div>
+
+			<div class="step" data-x="-2600" data-y="-8400" data-rotate-x="30" data-rotate-y="-60" data-rotate-z="90" data-scale="5">
+				<h1>可是如果只能检测状态姿势……</h1>
+			</div>
+			
+			<div class="step" data-x="1280" data-y="-2400" data-rotate-x="30" data-rotate-y="-60" data-scale="0.5">
+				<h1>那就简直<strong class="rbl">弱爆了</strong></h1>
+			</div>
+
+			<div class="step" data-x="-2600" data-y="2400" data-rotate-x="60" data-rotate-y="-30" data-rotate-z="90">
+				<h1>问题：加速度如何转换成运动轨迹</h1>
+				<dl style="text-align:left">
+					<dt>方案1：路径积分计算</dt>
+					<dd><strong>失败</strong>，因为精度问题，采样点间隔不能小于40ms</dd>
+					<dt>方案2：近似法——将两个采样间隔视为匀加速运动</dt>
+					<dd><strong>失败</strong>，同样因为精度问题，结果严重失真</dd>	
+					<dt>总结问题：由路径的二阶导数的离散采样积分计算出路径</dt>
+					<dd><strong>太难了，太难了……</strong>一个更严重的问题是坐标的相对性</dt>				
+				</dl>
+			</div>
+
+			<div class="step" data-x="-1800" data-y="1800">
+				<h1>那有没有好的办法呢？</h1>
+			</div>
+			
+			<div class="step" data-x="1280" data-y="2400" data-rotate-x="60" data-rotate-y="-30" data-rotate-z="30" data-scale="5">
+				<h1>猜想：连续函数二阶导数的轨迹相似</h1>
+				<h2 class="notice">说明原始轨迹相似？</h2>
+			</div>
+			
+			<!--
+			<div class="step" data-x="1280" data-y="-2400" data-rotate-x="30" data-rotate-y="-60" data-scale="0.5">
+				<h1>那就简直<strong class="rbl">弱爆了</strong></h1>
+			</div>
+			-->
+
+			<div class="step" data-x="2400" data-y="-4800">
+				<h1>试试看吧：概率模型登场</h1>
+				<ul>
+					<li>基于 $1 recognizer 算法的相似度匹配模型</li>
+					<li>对手势进行训练采样</li>
+					<li><strong>结果意外的好！</strong></li>
+				</ul>
+			</div>			
+			
+			<div class="step" data-x="2400" data-y="-3600" data-rotate-x="30" data-rotate-y="-60">
+				<h1>$1 recognizer 模型效果不错</h1>
+				<ul>
+					<li>训练样本数量影响召回率</li>
+					<li>训练样本数量影响匹配速度和精确度</li>
+					<li>剩下的事情是寻找一个最佳的平衡点！</li>
+				</ul>
+			</div>	
+
+			<div class="step" data-x="-1200" data-y="-10000" data-rotate-x="60" data-rotate-y="-60">
+				<h1>上面说的这些和HTML5有啥关系？</h1>
+			</div>	
+
+			<div class="step" data-x="-2024" data-y="-7024" data-rotate-x="120" data-rotate-y="-50">
+				<h1>额！！好像没多大关系</h1>
+				<h2>要不我们来讨论点有关系的</h2>
+			</div>	
+
+			<div class="step" data-x="-1200" data-y="7024" data-rotate-x="60" data-rotate-y="-60">
+				<h1>接下来是建立手势与目标应用之前的控制</h1>
+				<h2>websocket技术该登场了 —— 这部分由 <em>屈屈</em> 继续</h2>
+			</div>	
+
+			<div class="step" data-x="1200" data-y="8000" data-rotate-x="30" data-ratate-y="-60">
+				<h1>神马是WebSocket？</h1>
+				<ul>
+					<li>WebSocket包括：浏览器中的WebSocket Api(by w3c)和WebSocket 协议(by ietf)两部分</li>
+					<li>浏览器通过80等端口和服务器进行请求握手，服务器根据header识别是否websocket请求</li>
+					<li>如果是，则将请求升级为一个WebSocket连接，握手成功后就进入双向长连接的数据传输阶段</li>
+					<li>WebSocket的数据传输是基于帧的方式: 0x00 表示数据开始, 0xff表示结束, 数据以utf-8编码</li>
+				</ul>
+			</div>
+
+			<div class="step" data-x="1200" data-y="6000" data-rotate-x="70" data-ratate-y="-90">
+				<h1>浏览器支持程度？</h1>
+				<img src="pic1.png" /><br />
+				<a href="http://caniuse.com/websockets">来源</a>
+			</div>
+
+			<div class="step" data-x="3600" data-y="2000" data-rotate-x="50" data-ratate-y="-30">
+				<h1>坑爹的WebSocket协议版本！</h1>
+				<img src="pic2.png" width="800" /><br />
+				<a href="http://en.wikipedia.org/wiki/WebSocket#cite_note-19">来源</a>
+			</div>
+
+			<div class="step" data-x="4800" data-y="3000" data-rotate-x="-45" data-ratate-y="-180">
+				<h1>hixie-76</h1>
+<pre>
+       GET /demo HTTP/1.1
+        Host: example.com
+        Connection: Upgrade
+        Sec-WebSocket-Key2: 12998 5 Y3 1  .P00
+        Sec-WebSocket-Protocol: sample
+        Upgrade: WebSocket
+        Sec-WebSocket-Key1: 4 @1  46546xW%0l 1 5
+        Origin: http://example.com
+
+        ^n:ds[4U
+</pre>
+<pre>
+        HTTP/1.1 101 WebSocket Protocol Handshake
+        Upgrade: WebSocket
+        Connection: Upgrade
+        Sec-WebSocket-Origin: http://example.com
+        Sec-WebSocket-Location: ws://example.com/demo
+        Sec-WebSocket-Protocol: sample
+
+        8jKS'y:G*Co,Wxa-
+</pre>
+			</div>
+
+			<div class="step" data-x="-1200" data-y="4500" data-rotate-x="-60" data-ratate-y="-270">
+				<h1>RFC 6455</h1>
+<pre>
+        GET /demo HTTP/1.1
+        Host: example.com
+        Upgrade: websocket
+        Connection: Upgrade
+        Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
+        Origin: http://example.com
+        Sec-WebSocket-Protocol: chat, superchat
+        Sec-WebSocket-Version: 13
+</pre>
+<pre>
+        HTTP/1.1 101 Switching Protocols
+        Upgrade: websocket
+        Connection: Upgrade
+        Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=
+        Sec-WebSocket-Protocol: chat
+</pre>
+			</div>
+			<div class="step" data-x="-600" data-y="6400" data-rotate-x="20" data-ratate-y="-120">
+				<h1>站在巨人肩膀上</h1>
+				<h2><a href="http://socket.io">Socket.IO</a>（NodeJS）</h2>
+				<ul>
+					<li>WebSocket</li>
+					<li>Adobe® Flash® Socket</li>
+					<li>AJAX long polling</li>
+					<li>AJAX multipart streaming</li>
+					<li>Forever Iframe、JSONP Polling</li>
+				</ul>
+				<h2><a href="http://socketo.me/">Ratchet</a>（PHP）</h2>
+				<ul>
+					<li>WebSocket RFC6455</li>
+					<li>WebSocket HyBi-10+</li>
+					<li>WebSocket Hixie76</li>
+				</ul>
+			</div>
+			<div class="step" data-x="-500" data-y="9800" data-rotate-x="-50" data-ratate-y="-150">
+				<h1>这样，就简单多了</h1>
+<pre>
+[Constructor(in DOMString url, optional in DOMString protocol)]
+        interface WebSocket {
+           readonly attribute DOMString URL;
+           // ready state
+           const unsigned short CONNECTING = 0;
+           const unsigned short OPEN = 1;
+           const unsigned short CLOSED = 2;
+           readonly attribute unsigned short readyState;
+           readonly attribute unsigned long bufferedAmount;
+        
+           // networking
+           attribute Function onopen;
+           attribute Function onmessage;
+           attribute Function onclose;
+           boolean send(in DOMString data);
+           void close();
+        };
+        WebSocket implements EventTarget;
+</pre>
+			</div>
+			<div class="step" data-x="-2000" data-y="10400" data-rotate-x="-50" data-ratate-y="-1050">
+				<h1>例子</h1>
+<pre>
+var myWebSocket = new WebSocket("ws://qgy18.imququ.com");
+        
+
+myWebSocket.onopen = function(evt) { alert("连上了"); };
+myWebSocket.onmessage = function(evt) { alert( "新消息："  +  evt.data); };
+myWebSocket.onclose = function(evt) { alert("断开了"); };
+
+
+myWebSocket.send("Hello Kitty!");
+myWebSocket.close();
+</pre>
+			</div>
+			<div class="step" data-x="-8800" data-y="-8800" data-scale="40">
+				<h1>谢谢！</h1>
+				<h2 class="notice">Q&amp;A</h2>
+			</div>
+		</div>
+<script src="../js/113.js"></script>
+<script src="../js/config.js"></script>
+<script src="../js/websocket.js?002.js"></script>
+		<script type="text/javascript" src="impress.js"></script>
+	</body>
+</html>

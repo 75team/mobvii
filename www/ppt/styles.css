@@ -1,0 +1,13 @@
+.no-support-message { display:none; }
+.impress-not-supported .no-support-message { display:block; }
+
+/* additional styles just to make things look a bit nicer */
+body { background:#EBEBEB; font:16px/24px "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; color:#333; }
+.step { width:1000px; margin:0 auto 24px auto; text-align:center; }
+h1 {font-size:3em}
+
+li { font-size:22px; text-align:left; line-height:48px; margin-left:48px;}
+strong { color:red;}
+.rbl {font-size:2em}
+
+pre {text-align:left;margin:20px 200px;font-weight:bold;background:#fff;padding:10px;}

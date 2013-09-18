@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+	<head>
+	<title> new document </title>
+		<meta charset="utf-8">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=7">
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+		<base target=_blank></base>
+		<script type="text/javascript" src="../../../apps/qwrap.js"></script>
+		<script type="text/javascript" src="../tweet.h.js"></script>
+	</head>
+		
+	<body>
+		<button id="test">点击我控制动画</button>
+		<div id="test2">test</div>
+		<script type="text/javascript">
+			var TH = QW.TweetH;
+			var g = QW.Dom.g;
+			W("#test").on("click", function(){
+				TH.tweet(g("test"),"mytest",{x:1});
+			});
+			TH.receive(g("test2"),"mytest",function(evt){
+				W(evt.target).fadeToggle();
+			});
+		</script>
+	</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta content="width=320,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" id="viewport" name="viewport" />
+    <title>TEST</title>
+    <style>
+        input {height:35px;width:140px;margin:5px 5px 5px 0;font-size:20px;}
+    </style>
+    </head>
+    <body>
+    <script src="js/113.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/websocket.js"></script>
+    <script>
+        var conn, conn2;
+        
+        function log(data) {
+            W('#log').html(data);
+        };
+
+        Dom.ready(function() {
+            window.scrollTo(0, 1);
+            
+            conn = new MyWebSocket(SEND_WS_URL);
+            conn2 = new MyWebSocket(REC_WS_URL);
+
+            conn.on('open', function() {
+                log( "Connected." );
+            });
+
+            conn2.on('close', function(  ) {
+                log( "Disconnected. Please refresh this page." );
+            });
+
+            conn2.on('message', function( e ) {
+                log( e.data );
+            });
+
+            conn2.connect();
+            conn.connect();
+
+            W('body').delegate('input', 'click', function() {
+                conn.send(this.id);
+            });
+        });
+
+        window.onbeforeunload = function() {
+            try {
+                conn.disconnect();
+            } catch (e) { }
+        };
+    </script>
+    <h1>控制播放</h1>
+    <input type="button" value="上一个" id="playlist.prev" />
+    <input type="button" value="下一个" id="playlist.next" /><br />
+    <input type="button" value="播放" id="player.play" />
+    <input type="button" value="暂停" id="player.pause" /><br />
+    <input type="button" value="播放/暂停" id="player.toggle" /><br />
+    <input type="button" value="音量+" id="player.v_up" />
+    <input type="button" value="音量-" id="player.v_down" /><br />
+    <input type="button" value="静音/非静音" id="player.mute" /><br /><br />
+    <div id='log'></div><br /><br /><br />
+	</body>
+</html>

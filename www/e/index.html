@@ -1,0 +1,147 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  	<title>测视力 | undefined队</title>
+    <link rel="stylesheet" type="text/css" href="" />
+    <style type="text/css">
+	html {height:100%;}
+	body {background : -webkit-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 1) 0%,rgba(28, 30, 32, 1) 100%);overflow:hidden;height:100%;}
+	.progress {position: fixed;height: 5px;width: 100%;top: 0;left: 0;background: rgba(0,0,0,0.2);}
+	.progress span {display: block;background: #13DAEC;height: 100%;width: 0px;-webkit-transition: width 800ms cubic-bezier(0.260, 0.860, 0.440, 0.985);}
+	#container{left:50%;top:50%;margin-left:-175px;margin-top:-200px;width:350px;height:350px;position:absolute;
+	}
+	#container #item1 {width:100%;height:100%;position:absolute;top:0;left:0;-webkit-transition:0.8s;border-radius: 20px;text-align:center;line-height:350px;color:#fff;font-size:48px;background:#333;}
+
+	#result {display:table;position:absolute;top:50%;left:50%;width:600px;height:220px;margin-top:-150px;margin-left:-300px;background:#fff;border-radius: 20px;box-shadow:5px 5px 5px rgba(0,0,0,.4);display:none;}
+	#result .img {display:table-cell;width:240px;text-align:center;height:100%;vertical-align:middle;}
+	#result .txt {display:table-cell;width:350px;line-height:2;font-size:32px;vertical-align:middle;text-shadow:3px 3px 3px #ccc;color:#666;}
+
+    </style>
+    </head>
+	<body>
+		<div class="progress"><span id="progress" style="width: 0%; "></span></div>
+		<div id="container">
+			<div id="item1">晃动手机开始</div>
+		</div>
+		<div id="result">
+			<div class="img"><img /></div>
+			<div class="txt"></div>
+		</div>
+		<script src="../js/113.js"></script>
+		<script src="../js/config.js"></script>
+		<script src="../js/websocket.js?002.js"></script>
+		<script type="text/javascript">
+			var max, index, val, correct, wrong;
+
+			function init() {
+				W('#progress').css('width', '0%');
+				max = 5;
+				index = correct = wrong = 0;
+				val = '';
+			};
+
+			function step(n) {
+				if(n > max) return false;
+				if(n == max) {
+					W('#progress').css('width','100%');
+					W('#result').show('table');
+					var msg = ['全错，你在玩我吧！','只对一题，鄙视你！','对了2题，有点差哦！','对了3题，凑合吧！','对了4题，真棒！','全部正确，你是偶像！'][correct];
+					W('#result .txt').html(msg);
+					W('#result img').set('src', 'pic/' + correct + '.gif');
+				} else {
+					var font = 10 + parseInt(200 * Math.random(), 10),
+						rotate = parseInt(Math.random() * 50, 10);
+					val = [1, 2, 3, 4][rotate % 4];
+
+					W('#progress').css('width', n * 20 + '%');
+					W('#item1').css('fontSize', font + 'px').css('-webkit-transform' , 'rotate('+90 * rotate+'deg)').html('E');
+				}
+			};
+
+			init();
+
+			var log = function(msg) {
+		        console.log(msg);
+		    };
+
+		    var conn = new MyWebSocket(REC_WS_URL);
+
+		    conn.on('open', function() {
+		        log( "Connected." );
+		    });
+
+		    conn.on('close', function(  ) {
+		        log( "Disconnected." );
+		        log( "retry..." );
+		        setTimeout(function() {
+		            conn.connect();
+		        }, 3000);
+		    });
+
+		    var isStart = false, 
+		    	isLock = false;
+
+		    conn.on('message', function( e ) {
+		        if(document.webkitHidden) {
+		            log('page hidden');
+		            return false;
+		        }
+
+		        var msg = e.data.trim().toLowerCase();
+
+		        console.log(msg);
+
+		        if(msg == "player.toggle") {
+		        	if(!isStart) {
+		        		isStart = true;
+		        		step(1);
+		        	} else if(index >= max){
+		        		location.reload();
+		        	}
+		        	return false;
+		        }
+
+		        if(!isStart || isLock) return false;
+
+		        var flag = false, user_val;
+
+		        switch(msg) {
+					case "player.mute|1":
+		            	flag = true;
+		            	user_val = 4;
+						break;
+					case "player.mute|0":
+		            	flag = true;
+		            	user_val = 2;
+						break;
+		            case "playlist.prev":
+		            	flag = true;
+		            	user_val = 3;
+		                break;
+		            case "playlist.next":
+		            	flag = true;
+		            	user_val = 1;
+		                break;
+		        }
+
+		        if(flag) {
+		        	console.log(user_val, val);
+		            if(user_val - val == 0) {
+		            	correct++;
+		            } else {
+		            	wrong++;
+		            }
+		            step(++index);
+
+		            isLock = true;
+		            setTimeout(function() {
+		            	isLock = false;
+		            }, 1000);
+		        }
+		        
+		    });
+		    conn.connect();
+		</script>
+	</body>
+</html>

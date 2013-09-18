@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+	<head>
+	<title> new document </title>
+		<meta charset="utf-8">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=7">
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+		<base target=_blank></base>
+		<script type="text/javascript" src="../../../apps/qwrap.js"></script>
+		<script type="text/javascript" src="../../async/async.h.js"></script>
+		<script type="text/javascript" src="../../async/async_retouch.js"></script>
+		<script type="text/javascript" src="../tweet.h.js"></script>
+		<script type="text/javascript" src="../tweet_retouch.js"></script>
+	</head>
+		
+	<body>
+		<button id="sender">点击我发送一个消息</button>
+		<button id="receive_start">点击我开始接收消息</button>
+		<input id="accept_once" type="checkbox">只接收最近一次开始接收之前的消息</input>
+		<div id="receiver"><p>消息:</p></div>
+		<script type="text/javascript">
+			var id = 0;
+			
+			W("#sender").on("click", function(){
+				if(g("accept_once").checked){
+					Async.clearSignals("twitter.test#message");
+				}
+				W(this).tweet("test#message", {err:"ok", id:++id}, true);
+			});
+
+			W("#receive_start").on("click", function(){
+				W(this).attr("disabled", "disabled");
+
+				W("#receiver").receive("test#message", function(evt){
+					var data = evt.data;
+					W(this).appendChild(W("<p>"+data.err+"."+data.id+"</p>"));
+				});
+			});
+
+		</script>
+	</body>
+</html>

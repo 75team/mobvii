@@ -1,0 +1,280 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+        <title>Speech Test</title>
+        <script type="text/javascript" charset="utf-8" src="cordova-1.9.0.js"></script>
+        <script type="text/javascript" charset="utf-8" src="conf.js"></script>
+        <script type="text/javascript" charset="utf-8" src="templates.data.js"></script> 
+        <script type="text/javascript" charset="utf-8" src="113.js"></script>
+        <script type="text/javascript">
+            var L = {
+                get : function(k){
+                    return JSON.parse(localStorage.getItem(k) || '{}');
+                },
+                set : function(k, v){
+                    localStorage.setItem(k, JSON.stringify(v));
+                }
+            };
+        </script>
+        <script type="text/javascript" charset="utf-8" src="js/websocket.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/dollar.js"></script>
+        <script type="text/javascript" charset="utf-8" src="components/twitter/twitter.js"></script>
+        <style type="text/css">
+            * {margin:0;padding:0;}
+            html {overflow:hidden;}
+            body {width:100%;height:100%;font-family:Arial,Helvetica,LiHei Pro Medium;font-size-adjust:none;-webkit-text-size-adjust:none;font-size:20px;overflow:hidden;}
+            button {padding:5px 10px;font-size:20px;}
+            .c {height:100%;display:none;}
+            .c.selected {display:block;}
+            #gesture-demo>li {display:none}
+            #main {width:100%;height:100%;overflow:hidden;}
+            #main:after{position:absolute;left:0;top:0;width:100%;display:block;content:"";height: 800px; background: -webkit-gradient(radial, center center, 0, center center, 460, from(#1a82f7), to(#2F2727));background: -webkit-radial-gradient(circle, #1a82f7, #2F2727);z-index:-1;}
+
+            #ss {overflow:hidden}
+            #ecg {}
+
+            .ret {position:absolute;bottom:60px;left:0;width:100%;color:rgb(180, 212, 255)}
+            .ctrl {position:absolute;bottom:0;left:0;width:100%;border-top:2px solid #63C7FE;background:rgba(255,255,255,.1)}
+            .ctrl>span {display:inline-block;float:left;height:60px;line-height:60px;color:#fff;text-align:center;text-shadow:1px 2px 10px #333}
+            .ctrl>span:first-child {border-right:2px solid #63C7FE}
+
+            #training-cont {-webkit-transform: scale(0.5);-webkit-transform-origin: 0 0;}
+
+            #ykq {background:#0E6C38}
+            #ykq-cont .col {margin-top:6px;color:#cecece;text-shadow:1px 2px 10px #333;overflow:hidden}
+            #ykq-cont .col:first-child {margin-top:0}
+            #ykq-cont .col:after {content:'';display:block;width:100%;clear:both;height:0;visibility:hidden}
+            #ykq-cont .col1 {height:80px;line-height:80px}
+            #ykq-cont .col2 {height:130px;line-height:130px;}
+            #ykq-cont .col3 {height:160px;line-height:160px;}
+            #ykq-cont .col4 {height:100px;line-height:100px;}
+            .ykq-btn, #ykq-cont .goc{text-align:center;float:left;}
+            #p1 {width:50%;background:#D0533F;}
+            #p2 {width:48%;float:right;background:#DA8516}
+            #p1:first-letter, #p2:first-letter {font-size:1.6em}
+            #p3 {width:58%;background:#494AA7}
+            #p4 {width:40%;float:right;background:#B31F39}
+            #p3:first-letter, #p4:first-letter {font-size:1.4em}
+            #p5 {width:35%;background:#DA8516}
+            #p6 {width:63%;float:right;background:#59B910;}
+            #p6:first-letter {font-size:2em}
+            #p7 {width:30%;background:#48A1A6}
+            #p8 {width:36%;margin-left:6px;background:#22588A}
+            #p9 {width:30%;float:right;background:#7E9F2E}
+            #ykq-cont .col4 em {font-size:2em;vertical-align:top}
+
+            #mask {height:100%;width:100%;position:absolute;top:0;left:0;background:#000;opacity:0.7;text-align:center;color:#fff}
+        </style>
+    </head>
+    <body>
+        <div id="main">
+            <!-- 控制界面 -->
+            <div class="c selected" id="ss">
+                <canvas id="ecg" height="300" width="320"></canvas>
+                <p id="ret" class="ret"></p>
+                <div class="ctrl">
+                    <span id="b-xl" class="goc" data-go="xl" style="width:50%">训练</span>
+                    <span id="b-ykq" class="goc" data-go="ykq" style="width:49%">遥控器</span>
+                </div>                
+            </div>
+
+            <!-- 训练界面 -->
+            <div class="c" id="xl">
+                <div id="training-cont">
+                    <canvas id="training" width="600" height="400">
+                </div>
+                <p id="xlret" class="ret">请按图示手势训练</p>
+                <div class="ctrl">
+                    <span id="gesture-next" style="width:30%">换一换</span>
+                    <span class="goc" data-go="ss" style="width:30%">返回</span>
+                    <span id="clear-user-templates" style="width:39%;border-left:2px solid #63C7FE">清除</span>
+                </div>
+            </div>
+
+            <!-- 遥控器界面 -->
+            <div class="c" id="ykq">
+                <div id="ykq-cont">
+                    <div class="col col1">
+                        <span class="ykq-btn" id="p1" data-action="playlist.prev">上一个</span>
+                        <span class="ykq-btn" id="p2" data-action="playlist.next">下一个</span>
+                    </div>
+                    <div class="col col2">
+                        <span class="ykq-btn" id="p3" data-action="player.play">播放</span>
+                        <span class="ykq-btn" id="p4" data-action="player.pause">暂停</span>
+                    </div>
+                    <div class="col col3">
+                        <span class="ykq-btn" id="p5" data-action="player.mute">静音/非静音</span>
+                        <span class="ykq-btn" id="p6" data-action="player.toggle">播放/暂停</span>
+                    </div>
+                    <div class="col col4">
+                        <span class="ykq-btn" id="p7" data-action="player.v_down">音量<em>-</em></span>
+                        <span id="p8" class="goc" data-go="ss">返回</span>
+                        <span class="ykq-btn" id="p9" data-action="player.v_up">音量<em>+</em></span>
+                    </div>
+                    <!--
+                    <button data-action="playlist.prev">上一个</button>
+                    <button data-action="playlist.next">下一个</button>
+                    <button data-action="player.play">播放</button>
+                    <button data-action="player.pause">暂停</button>
+                    <button data-action="player.toggle">播放/暂停</button>
+                    <button data-action="player.v_up">音量+</button>
+                    <button data-action="player.v_down">音量-</button>
+                    <button data-action="player.mute">静音/非静音</button>
+                    -->
+                </div>
+            </div>
+        </div>
+        <div id="mask">
+            正在连接中，请稍等...
+        </div>
+        <script type="text/javascript" charset="utf-8" src="js/wave.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/sensor.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/sensordemo.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/collection.js"></script>
+        <script type="text/javascript">
+            (function(){
+                /*运行环境检测*/
+                var PageCheck = {
+                    /*检测是否有网络*/
+                    network : function(){
+                        return navigator.network.connection.type == Connection.UNKNOWN || navigator.network.connection.type == Connection.NONE ? '请连接上网络' : true;
+                    },
+                    /*检测所有*/
+                    all : function(){
+                        var retMsg = [],
+                            flag = 0;
+
+                        for(var i in this){
+                            if('all' != i){
+                                retMsg.push(this.network());
+                            }
+                        };                          
+
+                        retMsg.forEach(function(i, index){
+                            if(true === i){
+                                retMsg[index] = '';
+                                flag++;
+                            }
+                        });
+                        return flag == retMsg.length ? true : retMsg.join("\n").replace(/\n+/g, "\n");
+                    }
+                };
+
+                document.addEventListener("deviceready", function(){
+                //window.addEventListener("load", function(){
+                    var check = PageCheck.all();
+                    /*不满足运行条件则报提示信息 & 返回*/
+                    if(check !== true){
+                        alert(check);
+                        return;
+                    }
+
+                    /*心电图*/
+                    function ecgshow(){
+                        /*心电图曲线*/
+                        var ecgEl = g('ecg');
+                            ecgEl.width = ecgEl.width;
+                            ecg = ecgEl.getContext('2d');
+                            ecg.moveTo(0, 150);
+                            ecg.strokeStyle = '#ccc';
+                        var e = 0,
+                            x = 0;
+                        ecgt = setInterval(function(){
+                            if(this.sensorxyz == null) return;
+                            ecg.lineTo(x += 20, 150 + this.sensorxyz.x * 5);
+                            ecg.stroke();
+                            if(x == 320){
+                                clearInterval(ecgt);
+                                ecgshow();
+                            }
+                        }, 80);
+                    }
+
+                    /*建立socket连接*/
+                    conn = new MyWebSocket(CONF.ws);
+                    conn.on('open', function() {
+                        W('#mask').hide();
+                        W('#ret').html('连接成功。');
+                        //启动传感器监测
+                        SensorMonitor.start();
+                        ecgshow();
+
+                        conn.send('device.connet');
+                    });
+
+                    conn.on('error', function(){
+                        alert('error');
+                    });
+
+                    conn.on('close', function() {
+                        W('#mask').show();
+                        if(ecgt){
+                            clearInterval(ecgt);
+                        }
+                        setTimeout(function() {
+                            conn.connect();
+                        }, 1000);
+                    });
+                    conn.connect();
+
+                    /*监听指令，发送到socket服务器*/
+                    W(document).receive("command_sent", function(evt){
+                        var data = evt.data;
+                        W('#ret').html(data + (new Date).getTime());
+                        conn.send(data);
+                    });
+
+                    /*跳转*/
+                    W('.goc').click(function(e){
+                        e.preventDefault();
+                        var _showc =this.dataset.go;
+                        W('.c').removeClass('selected');
+                        W('#' + _showc).addClass('selected');
+                        //手势控制启用、暂停
+                        switch(_showc){
+                            case 'xl':
+                                SensorMonitor.start();
+                                W(document).tweet("xlstart");
+                                break;
+                            case 'ykq' :
+                                SensorMonitor.stop();
+                                break;
+                            case 'ss' :
+                                SensorMonitor.isUserSetup = false;
+                                SensorMonitor.start();
+                                break;
+                        }
+                    });
+
+                    /*遥控器*/
+                    W('.ykq-btn').click(function(e){
+                        e.preventDefault();
+                        W(document).tweet("command_sent", this.dataset.action);
+                    });
+
+                    (function() {
+                        var id = null;
+                        W('#p7, #p9').on('touchstart', function(e) {
+                            var me = this;
+                            if(id) { 
+                                clearInterval(id); 
+                                id = null; 
+                            }
+                            id = setInterval(function() {
+                                W(document).tweet("command_sent", me.dataset.action);
+                            }, 500);
+                        }).on('touchend', function(e) {
+                            if(id) { 
+                                clearInterval(id); 
+                                id = null; 
+                            }
+                        });
+                    })();
+
+                }, false);
+            })();            
+        </script>    
+    </body>
+</html>

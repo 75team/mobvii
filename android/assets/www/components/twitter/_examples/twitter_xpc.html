@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>XPC Demo</title>
+	<script type="text/javascript" src="../../../apps/core_dom_youa.js"></script>
+	<script type="text/javascript" src="../../../components/xpc/xpc.js"></script>
+	<script type="text/javascript" src="../tweet.h.js"></script>
+	<script type="text/javascript" src="../tweet_retouch.js"></script>	
+    </head>
+	<body>
+		<iframe name="XPC_IFRAME" src="http://silverna.org/twitter_xpc_child.html"></iframe>
+		<div><input type="text" id="txt" size="20" /><input id="send" type="button" value="发送" /></div>
+		<div id="output"></div>
+		<script type="text/javascript">
+		W(window).on('load', function() {
+			W('#send').on('click', function() {
+				W(this).tweet('XPC.message', W('#txt').val());
+			});
+			
+			W('#output').receive('XPC.message', function(e) {
+				W(this).html(e.data + '<br>' + W(this).html());
+			});
+		});
+		</script>
+	</body>
+</html>

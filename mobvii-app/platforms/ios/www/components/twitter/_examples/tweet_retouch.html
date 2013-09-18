@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+	<head>
+	<title> new document </title>
+		<meta charset="utf-8">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=7">
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+		<base target=_blank></base>
+		<script type="text/javascript" src="../../../apps/qwrap.js"></script>
+		<script type="text/javascript" src="../tweet.h.js"></script>
+		<script type="text/javascript" src="../tweet_retouch.js"></script>
+	</head>
+		
+	<body>
+		<button id="test">点击我控制动画</button>
+		<div id="test2">test2</div>
+		<script type="text/javascript">
+			W("#test").on("click",function(){
+					W("#test").tweet("button#test_clicked",{dur:300})
+						   .attr("disabled","disabled");
+				}
+			);
+			W("#test").receive("div#test2_animend",function(){
+				W("#test").attr("disabled","");
+			});
+
+			W("#test2").receive("button#test_clicked",function(evt){
+				var data = evt.data;
+				W("#test2").fadeToggle(data.dur, function(){
+					W("#test2").tweet("div#test2_animend");
+				});
+			});
+		</script>
+	</body>
+</html>

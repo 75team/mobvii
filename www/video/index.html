@@ -1,0 +1,213 @@
+<!doctype html>
+<!--[if lt IE 7]><html class="no-js ie6 oldie" lang=en><![endif]-->
+<!--[if IE 7]><html class="no-js ie7 oldie" lang=en><![endif]-->
+<!--[if IE 8]><html class="no-js ie8 oldie" lang=en><![endif]-->
+<!--[if gt IE 8]><!--> <html class=no-js lang=en> <!--<![endif]-->
+<head>
+  <meta charset=utf-8>
+  <title>360影视播放器 | undefined队</title>
+  <link rel="stylesheet" href="css/beb9a77c.css" />
+  <link rel=stylesheet href='css/common.css'>
+</head>
+<body>
+<div id="mininav">
+	<div class="mininav-inner">
+		<div class="mininav-hd">
+			<a href="http://v.360.cn/index.html" title="360影视" >360影视</a>
+		</div>
+		<div class="mininav-bd">
+			<a href="http://v.360.cn/index.html" target="_self" >首页</a>
+			<a href="http://v.360.cn/dianying/index.html" target="_self" >电影</a>
+			<a href="http://v.360.cn/dianshi/" target="_self" >电视剧</a>
+			<a href="http://v.360.cn/zongyi/" target="_self">综艺</a>
+			<a href="http://v.360.cn/dongman/" target="_self">动漫</a>
+			<!--<a href="/yule/index.html" target="_self">娱乐<em class="tips-new"></em></a>-->
+		</div>
+		<div class="mininav-ft">
+			<form method="get" action="http://so.v.360.cn/index.php" class="search-form gclearfix">
+				<input type="text" class="search-txt" placeHolder="HTML5大赛@360" autocomplete="off" name="kw" id="kw" />
+				<input type="submit" class="search-btn" value="搜索"/>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="video-info">
+<h1>360影视播放器</h1>
+</div>
+<div class="video-box">
+	<div class="video-player">
+		<div class="logo"></div>
+		<video id="home_video_html5_api" class="video" preload="true" height="450" width="970"></video>
+		<div class="bt-play"><a href="#"></a></div>
+		<div class="video-player-toolbar">
+			<div class="progress">
+				<div class="curr" style="width:0%"></div>
+			</div>
+			<div class="bt-action">
+				<div class="play-control">
+					<div class="playing"></div>
+				</div>
+				<div class="mute-control">
+					<div class="vol-3"></div>
+				</div>
+				<div class="volume-control">
+					<div class="curr" style="width:80%"></div>
+					<div class="handle" style="left:55%"></div>
+				</div>
+				<div class="time-control"><span class="curr">00:00</span> <span class="line">/</span> <span class="total">00:00</span></div>
+				<!--<div class="fullscreen-control">
+					<div></div>
+				</div>-->
+			</div>
+		</div>
+	</div>
+</div>
+		<div class="video-list">
+			<ul class="list">
+			</ul>
+		</div>
+	</div>
+	<div class="clearfix" id="footer">
+    	<a hidefocus="false" href="/aboutus.html" target="_blank">关于我们</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a hidefocus="false" href="/feedback.html" target="_blank">意见反馈</a>&nbsp;&nbsp;Copyright © 360安全网址. All Rights Reserved. &nbsp;&nbsp;<a hidefocus="false" href="http://www.miibeian.gov.cn" class="icp">京ICP证080047号</a>
+	</div>
+	<script src="../js/113.js"></script>
+	<script src="../js/config.js"></script>
+	<script src="../js/websocket.js?002.js"></script>
+	<script src="js/player.js?002.js"></script>
+	<script src="js/playlist.js?002.js"></script>
+	<script src="js/jquery.js"></script>
+	<script src="js/ambilight.js"></script>
+	<script>
+		var log = function(msg) {
+			console.log(msg);
+		};
+
+		var data = [
+				['pic/video4.jpeg', 'video/video4.mp4'],
+				['pic/video1.jpeg', 'video/video1.mp4'],
+				['pic/video2.jpeg', 'video/video2.mp4'],
+				['pic/video3.jpeg', 'video/video3.mp4'],
+				['pic/video5.jpeg', 'video/video5.mp4'],
+				['pic/video6.jpeg', 'video/video6.mp4']
+			],
+			
+			player = new Player(),
+			playList = new PlayList(data, player),
+			conn = new MyWebSocket(REC_WS_URL);
+
+		var play_status_str = localStorage.getItem('play_status'),
+			play_status = {};
+
+		try {
+			if(play_status_str) {
+				play_status = JSON.parse(play_status_str);
+			}
+		} catch (e) {}
+
+		if(play_status) {
+			playList.select(play_status.index || 0);
+			W(player.video).on('canplay', function(e) {
+				player.fire('volume', {data : play_status.volume || .8 });
+				player.fire('progress', {data : play_status.progress || 0});
+
+				W(this).un('canplay');
+			});
+		} else {
+			playList.select(0);
+		}
+
+		W(document).on('webkitvisibilitychange', function() {
+			if('hidden' == document.webkitVisibilityState) {
+				player.fire('pause');
+			}
+		});
+
+		W(document).on('keydown', function(e) {
+			console.log(e.keyCode);
+			switch(parseInt(e.keyCode, 10)) {
+				case 32:
+					e.preventDefault();
+					player.fire('toggle');
+					break;
+				case 77:
+					e.preventDefault();
+					player.fire('mute');
+					break;
+				case 38:
+					e.preventDefault();
+					player.fire('v_up', {data : 0.1});
+					break;
+				case 40:
+					e.preventDefault();
+					player.fire('v_down', {data : 0.1});
+					break;
+				case 37:
+					e.preventDefault();
+					playList.fire('prev');
+					break;
+				case 39:
+					e.preventDefault();
+					playList.fire('next');
+					break;
+			}
+
+		});
+
+		W(window).on('beforeunload', function() {
+			var data = {
+				index : playList.index,
+				volume : player.video.volume,
+				progress : player.video.progress
+			};
+
+			localStorage.setItem('play_status', JSON.stringify(data));
+
+			conn.disconnect();
+		});
+
+		conn.on('message', function( e ) {
+			if(document.webkitHidden) {
+				log('page hidden');
+				return false;
+			}
+
+
+			var cmd = '',
+				arg,
+				msg = e.data.trim().split('|');
+
+			cmd = msg[0].toLowerCase();
+
+			if('unmatched' == cmd || 'player.unknown' == cmd) {
+				return false;
+			}
+
+			if(msg[1]) arg = msg[1];
+
+			var cmds = cmd.split('.');
+			if(cmds[0] == 'player') {
+				player.fire(cmds[1], {data : arg});
+			} else if (cmds[0] == 'playlist') {
+				playList.fire(cmds[1], {data : arg});
+			}
+
+			log(cmd);
+		});
+
+		conn.on('open', function() {
+			log( "Connected." );
+		});
+
+		conn.on('close', function(  ) {
+			log( "Disconnected." );
+			log( "retry..." );
+			setTimeout(function() {
+				conn.connect();
+			}, 3000);
+		});
+
+		conn.connect();
+		ambiLight.create(document.getElementById('home_video_html5_api'));
+	</script>
+</body>
+</html?
