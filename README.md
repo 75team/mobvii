@@ -3,7 +3,7 @@ mobvii 是一个开源的工具，可以让手持设备支持通过手势控制P
 
 ## 如何玩？
 ```bash
-git clone 
+git clone https://github.com/akira-cn/mobvii.git
 cd www
 python -m SimpleHTTPServer
 ```
