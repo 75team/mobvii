@@ -14,6 +14,11 @@ PC网页访问 http://localhost:8080
 
 先进行手势训练，之后即可以玩啦~
 
+## 效果演示视频
+
+http://v.youku.com/v_show/id_XNjEwNjY5NzAw.html
+
+
 ## 高级功能 —— 自己搭建服务器
 
 需要 node.js
