@@ -74,12 +74,13 @@ var CONF = {
 }
 ```
 
-# 播放器参数说明 
+## 播放器参数说明 
 
 https://github.com/akira-cn/mobvii/wiki/player_cmd
 
-# 开发团队
+## 开发团队
 
-(qgy18)[https://github.com/qgy18]
-(ivershuo)[https://github.com/ivershuo]
-(greengnn)[https://github.com/greengnn]
+[akira-cn](https://github.com/akira-cn)
+[qgy18](https://github.com/qgy18)
+[ivershuo](https://github.com/ivershuo)
+[greengnn](https://github.com/greengnn)
