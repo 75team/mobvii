@@ -81,6 +81,9 @@ https://github.com/akira-cn/mobvii/wiki/player_cmd
 ## 开发团队
 
 [akira-cn](https://github.com/akira-cn)
+
 [qgy18](https://github.com/qgy18)
+
 [ivershuo](https://github.com/ivershuo)
+
 [greengnn](https://github.com/greengnn)
